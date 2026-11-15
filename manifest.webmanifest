@@ -1,0 +1,16 @@
+{
+  "name": "SIPAT — Scan. Score. See what to reteach.",
+  "short_name": "SIPAT",
+  "description": "Scan answer sheets, get the item analysis and least learned competencies, and plan interventions — even without internet.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F1E8",
+  "theme_color": "#17233A",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
