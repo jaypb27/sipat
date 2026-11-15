@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIPAT — Scan. Score. See what to reteach.</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#17233A">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F5F1E8;--card:#FFFDF8;--ink:#17233A;--muted:#6B7385;--line:#E2DCCD;--red:#D4452F;--green:#1F8A5B;--amber:#C98A0B;--soft:#EEE8DA}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;
+  background-image:radial-gradient(rgba(23,35,58,.07) 1.6px,transparent 2.2px);background-size:22px 22px}
+h1,h2,h3,.brand b{font-family:'Fraunces',Georgia,serif;letter-spacing:-.01em;margin:0}
+h2{font-size:26px} h3{font-size:18px;margin-bottom:10px}
+.top{position:sticky;top:0;z-index:20;background:linear-gradient(100deg,#17233A 0%,#22355A 100%);border-bottom:3px solid var(--red);color:#fff;display:flex;align-items:center;gap:14px;padding:10px 18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer;margin-right:auto}
+.brand b{font-size:24px;letter-spacing:.06em}
+.brand small{display:block;font-size:11px;opacity:.75;margin-top:-4px}
+.top nav button{background:none;border:0;color:#fff;opacity:.75;font:600 14px 'Plus Jakarta Sans';padding:8px 10px;cursor:pointer;border-bottom:2px solid transparent}
+.top nav button.on{opacity:1;border-color:var(--red)}
+main{max-width:1080px;margin:0 auto;padding:22px 16px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 0 rgba(23,35,58,.04)}
+.hero{display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}
+.hero h1{font-size:40px;line-height:1.05}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero p{color:var(--muted);margin:6px 0 0;max-width:520px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink);background:var(--card);color:var(--ink);font:600 14px 'Plus Jakarta Sans';padding:9px 14px;border-radius:10px;cursor:pointer}
+.btn.pri{background:var(--red);border-color:var(--red);color:#fff}
+.btn.dark{background:var(--ink);color:#fff}
+.btn.ghost{border-color:var(--line)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.5}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.exam{cursor:pointer;transition:transform .12s}
+.exam:hover{transform:translateY(-2px);border-color:var(--ink)}
+.exam .meta,.muted{color:var(--muted);font-size:13px}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--soft)}
+.pill.r{background:#FBE3DE;color:var(--red)} .pill.g{background:#DDF1E7;color:var(--green)} .pill.a{background:#F8EBCB;color:#8a5f00}
+label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:3px}
+input,select,textarea{width:100%;font:inherit;color:inherit;background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:-1px}
+.form{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.keygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:4px 18px}
+.keyrow{display:flex;align-items:center;gap:4px}
+.keyrow span{width:26px;text-align:right;font-weight:700;font-size:13px;color:var(--muted)}
+.bub{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ink);background:#fff;font:600 12px 'Plus Jakarta Sans';cursor:pointer;padding:0}
+.bub.on{background:var(--ink);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-size:12px}
+td.c,th.c{text-align:center}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin:14px 0}
+.tabs button{background:none;border:0;font:600 14px 'Plus Jakarta Sans';padding:9px 14px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button.on{color:var(--ink);border-color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.stat{background:var(--soft);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font:700 24px 'Fraunces',serif}
+.stat span{font-size:12px;color:var(--muted)}
+.bar{height:8px;background:var(--soft);border-radius:9px;overflow:hidden;min-width:70px}
+.bar i{display:block;height:100%}
+#camBox{display:none;position:relative;background:#000;border-radius:14px;overflow:hidden;max-width:520px;margin:12px auto}
+#camBox.on{display:block}
+#camBox video{width:100%;display:block}
+#camBox .frame{position:absolute;inset:5%;border:2px dashed rgba(255,255,255,.7);border-radius:8px;pointer-events:none}
+#camStatus{position:absolute;left:0;right:0;bottom:0;background:rgba(23,35,58,.85);color:#fff;font-size:13px;padding:7px 12px;text-align:center}
+#review canvas{max-width:100%;border-radius:10px;border:1px solid var(--line)}
+.rev{display:grid;gap:16px;grid-template-columns:minmax(220px,360px) 1fr}
+@media(max-width:720px){.rev{grid-template-columns:1fr}.hero h1{font-size:32px}}
+.big{font:700 44px 'Fraunces',serif;line-height:1}
+.ans{display:flex;flex-wrap:wrap;gap:4px}
+.ans button{border:1px solid var(--line);background:#fff;border-radius:7px;font:600 12px 'Plus Jakarta Sans';padding:3px 6px;min-width:44px;cursor:pointer}
+.ans button.ok{background:#DDF1E7;border-color:#9fd3bb} .ans button.no{background:#FBE3DE;border-color:#efb1a6}
+.lead{background:linear-gradient(135deg,#17233A 0%,#243a63 100%);color:#fff;border-radius:22px;padding:26px 28px;display:grid;grid-template-columns:1.15fr 1fr;gap:12px;align-items:center;position:relative;overflow:hidden;margin-bottom:16px;box-shadow:0 14px 30px -18px rgba(23,35,58,.6)}
+.lead:before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.07) 5px,transparent 6px);background-size:26px 26px;pointer-events:none}
+.lead>*{position:relative}
+.lead .kick{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,255,255,.14);padding:4px 10px;border-radius:99px;margin-bottom:10px}
+.lead h1{font-size:42px;line-height:1.04} .lead h1 em{font-style:normal;color:#FF8A73}
+.lead p{color:rgba(255,255,255,.82);margin:10px 0 16px;max-width:460px}
+.lead .art{width:100%;max-height:250px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:flex-start}
+.step .ic,.banner .ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff}
+.step b{display:block;font-size:14px} .step span{font-size:12px;color:var(--muted);line-height:1.35;display:block}
+.sech{display:flex;align-items:center;gap:10px;margin:0 0 12px} .sech h2{font-size:22px} .sech i{flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--line) 0 8px,transparent 8px 14px)}
+.exam{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.exam .band{background-color:var(--tone);background-image:radial-gradient(circle,rgba(255,255,255,.2) 4px,transparent 5px);background-size:18px 18px;color:#fff;padding:9px 16px;font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.exam .in{padding:14px 16px 16px;flex:1;display:flex;flex-direction:column}
+.exam .facts{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--muted);margin:8px 0 12px}
+.exam .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700}
+.exam:hover{box-shadow:0 12px 24px -16px rgba(23,35,58,.55)}
+.xhead{background:var(--card);border:1px solid var(--line);border-left:8px solid var(--tone);border-radius:14px;padding:16px 18px;margin-bottom:0}
+.xhead .pill{background:var(--tone);color:#fff}
+.banner{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-bottom:16px}
+.banner .ic{width:52px;height:52px;border-radius:16px} .banner p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.empty{text-align:center;padding:26px 18px} .empty svg{width:120px;height:auto;margin-bottom:6px} .empty p{max-width:420px;margin:6px auto 0}
+.stat{border-top:3px solid var(--ink)} .stat:nth-child(4n+2){border-color:var(--red)} .stat:nth-child(4n+3){border-color:var(--green)} .stat:nth-child(4n+4){border-color:var(--amber)}
+.card h3{display:flex;align-items:center;gap:8px}
+.two{display:grid;gap:12px;grid-template-columns:minmax(200px,280px) 1fr}
+@media(max-width:760px){.lead{grid-template-columns:1fr;padding:22px 20px}.lead h1{font-size:34px}.lead .art{max-height:190px}.steps{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
+@media print{.lead,.steps{display:none}}
+#dlg{position:fixed;inset:0;background:rgba(23,35,58,.6);display:none;place-items:center;z-index:60;padding:16px}
+#dlg.on{display:grid} #dlg .card{max-width:480px;width:100%;margin:0}
+.pp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.pp button{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font:inherit;color:inherit;min-height:128px;justify-content:flex-end}
+.pp button:hover{border-color:var(--ink)} .pp button:disabled{opacity:.4;cursor:not-allowed} .pp button span{font-size:12px;color:var(--muted)}
+.credit{text-align:center;font-size:12.5px;color:var(--muted);line-height:1.6;padding:0 16px 34px} .credit b{color:var(--ink)}
+.byline{margin-top:16px;font-size:12.5px;color:rgba(255,255,255,.75);line-height:1.5;border-left:3px solid #FF8A73;padding-left:10px} .byline b{color:#fff}
+.about{display:flex;gap:16px;align-items:center}
+.gen{font-size:11.5px;color:var(--muted);text-align:center;margin:4px 0 0}
+.ivt td{font-size:12.5px}
+main{padding-bottom:30px}
+#syncPill{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:99px;font:600 12px 'Plus Jakarta Sans',system-ui,sans-serif;padding:7px 12px;cursor:pointer;white-space:nowrap}
+#syncPill.warn{background:var(--amber)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:99;max-width:90vw}
+#toast.on{opacity:1} #toast.err{background:var(--red)}
+[contenteditable]{outline:0;background:#FFFBEA} [contenteditable]:focus{box-shadow:inset 0 0 0 2px var(--amber)}
+.sign{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:26px 20px;margin-top:26px}
+.sign div p{margin:0;font-size:12px;color:var(--muted)}
+.sign div b{display:block;margin-top:30px;border-bottom:1px solid var(--ink);text-transform:uppercase;font-size:13px;min-height:21px}
+.rhead{text-align:center;display:none;margin-bottom:12px;font-size:12px;line-height:1.35}
+.rhead b{font-size:14px}
+#printArea{display:none}
+@media print{
+  body{background:#fff}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block}
+  #printArea .rhead{display:block}
+  #printArea .noprint{display:none!important}
+  #printArea .card{border:0;padding:0;box-shadow:none;margin-bottom:10px;background:#fff}
+  #printArea table{font-size:10.5px} #printArea th,#printArea td{border-color:#555;padding:3px 5px}
+  #printArea [contenteditable]{background:none}
+  #printArea h3{font-size:14px;margin:10px 0 5px} .stat{border:1px solid #999;background:#fff}
+  .sign div{break-inside:avoid} tr{break-inside:avoid} .ivt tr{break-inside:auto} #printArea .ivt td{font-size:9.5px;line-height:1.3} #printArea .gen{font-size:9px} thead{display:table-header-group}
+  #printArea svg.sheet{width:100%;height:100%;display:block}
+  .sheets{display:grid;width:200mm;height:285mm}
+  .sheets.n2{width:286mm;height:198mm;grid-template-columns:1fr 1fr}
+  .sheets.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+  .sheets .cell{min-width:0;min-height:0;overflow:hidden;padding:1.5mm}
+  .sheets.n2 .cell:nth-child(1),.sheets.n4 .cell:nth-child(odd){border-right:.25mm dashed #777}
+  .sheets.n4 .cell:nth-child(-n+2){border-bottom:.25mm dashed #777}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand" onclick="home()">
+    <svg width="38" height="38" viewBox="0 0 38 38"><circle cx="19" cy="19" r="15" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M11 19.5l6 6L30 9" fill="none" stroke="#D4452F" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><b>SIPAT</b><small>Scan. Score. See what to reteach.</small></div>
+  </div>
+  <nav>
+    <button id="nav-home" onclick="home()">Exams</button>
+    <button id="nav-classes" onclick="classes()">Classes</button>
+    <button id="nav-settings" onclick="settings()">Settings</button>
+  </nav>
+  <button id="syncPill" onclick="sync(true)" title="Tap to sync now">…</button>
+</header>
+<main id="main"></main>
+<footer class="credit"><b>SIPAT</b> — Scan-based Item Performance Analysis Tool<br><i>Scan. Score. See what to reteach.</i><br>An innovation by <b>Joy P. Bacala</b>, Teacher I · Samal Senior High School</footer>
+<div id="dlg"></div>
+<div id="toast"></div>
+<div id="printArea"></div>
+
+<script>
+/* ============================== SIPAT client ============================== */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LET='ABCDE';
+const APP={name:'SIPAT',full:'Scan-based Item Performance Analysis Tool',tagline:'Scan. Score. See what to reteach.',by:'Joy P. Bacala',role:'Teacher I',school:'Samal Senior High School'};
+let S={settings:{},exams:[],counts:{},roster:{},results:[],tab:'scan',fsec:'',review:null};
+let E=null;   // exam currently open
+let D=null;   // exam draft being edited
+
+function toast(m,err){const t=$('#toast');t.textContent=m;t.className='on'+(err?' err':'');clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',err?5000:2600);}
+/* ---------------------- Offline store + sync ---------------------- */
+const DB_KEY='sipat.v1';
+const DEF={region:'',division:'',school:'Samal Senior High School',schoolYear:'',masterTeachers:'',masterTeacherTitle:'Master Teacher',coordinator:'',coordinatorTitle:'School Testing Coordinator',principal:'',principalTitle:'School Principal'};
+let DB=null,syncing=false,syncT=null;
+function loadDB(){
+  let d=null;try{d=JSON.parse(localStorage.getItem(DB_KEY));}catch(e){}
+  d=d||{};d.settings=Object.assign({},DEF,d.settings);d.exams=d.exams||[];d.results=d.results||[];d.classes=d.classes||[];
+  d.sync=Object.assign({url:'',code:'',last:0},d.sync);return d;
+}
+function persist(noSync){
+  try{localStorage.setItem(DB_KEY,JSON.stringify(DB));}catch(e){toast('This phone is out of storage for SIPAT. Sync, then delete old exams.',1);}
+  refresh();paintSync();if(!noSync)syncSoon();
+}
+function touch(r){r.updated=Date.now();r.dirty=1;return r;}
+function newId(p){return p+Date.now().toString(36).toUpperCase()+Math.floor(Math.random()*1296).toString(36).toUpperCase();}
+function stampNow(){const d=new Date(),z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+' '+z(d.getHours())+':'+z(d.getMinutes());}
+function refresh(){
+  S.settings=DB.settings;S.exams=DB.exams.filter(x=>!x.deleted);
+  S.roster={};DB.classes.forEach(c=>{if(!c.deleted)S.roster[c.section]=(c.names||[]).map((n,i)=>({no:i+1,name:n}));});
+  S.counts={};DB.results.forEach(r=>{if(!r.deleted)S.counts[r.examId]=(S.counts[r.examId]||0)+1;});
+  if(E){E=S.exams.find(x=>x.id===E.id)||E;S.results=DB.results.filter(r=>r.examId===E.id&&!r.deleted);}
+}
+function pending(){return DB.exams.concat(DB.results,DB.classes).filter(r=>r.dirty).length+(DB.settings.dirty?1:0);}
+function paintSync(){
+  const p=$('#syncPill');if(!p)return;const n=pending();let t,w=false;
+  if(syncing)t='Syncing…';
+  else if(!navigator.onLine){t='Offline'+(n?' · '+n+' to upload':'');w=n>0;}
+  else if(!DB.sync.url){t='Not linked';w=true;}
+  else if(n){t=n+' to upload';w=true;}
+  else t='Synced ✓';
+  p.textContent=t;p.className=w?'warn':'';
+}
+function syncSoon(){clearTimeout(syncT);syncT=setTimeout(()=>sync(false),1500);}
+async function post(body){
+  body.code=DB.sync.code;
+  const res=await fetch(DB.sync.url,{method:'POST',body:JSON.stringify(body),redirect:'follow'});
+  const j=await res.json();if(!j.ok)throw new Error(j.error||'The Google Sheet did not accept the data.');return j;
+}
+async function sync(manual){
+  if(syncing)return;
+  if(!DB.sync.url){if(manual){settings();toast('Paste your school\'s sync link here first.',1);}return;}
+  if(!navigator.onLine){if(manual)toast('No internet right now. Everything is saved on this phone and will upload once you are connected.');return;}
+  syncing=true;paintSync();const stamp=Date.now(),d=r=>r.dirty;
+  try{
+    const j=await post({action:'sync',exams:DB.exams.filter(d),results:DB.results.filter(d),classes:DB.classes.filter(d),settings:DB.settings.dirty?DB.settings:null});
+    const merge=(loc,srv,key)=>{const m=new Map(srv.map(r=>[r[key],r]));loc.forEach(r=>{if(r.dirty&&r.updated>stamp)m.set(r[key],r);});return [...m.values()];};
+    DB.exams=merge(DB.exams,j.exams,'id');DB.results=merge(DB.results,j.results,'id');DB.classes=merge(DB.classes,j.classes,'section');
+    if(DB.settings.dirty&&DB.settings.updated>stamp){}else if(j.settings)DB.settings=Object.assign({},DEF,j.settings);else delete DB.settings.dirty;
+    DB.sync.last=Date.now();
+    syncing=false;persist(true);if(S.atHome)home();if(manual)toast('Everything is up to date.');
+  }catch(e){syncing=false;paintSync();if(manual)toast('Could not sync: '+(e.message||e),1);}
+}
+function nav(id){S.atHome=false;document.querySelectorAll('.top nav button').forEach(b=>b.classList.toggle('on',b.id==='nav-'+id));stopCam();S.review=null;window.scrollTo(0,0);}
+const fmtDate=d=>{if(!d)return'';const x=new Date(d+'T00:00:00');return isNaN(x)?d:x.toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});};
+const pct=(a,b)=>b?a/b*100:0;
+const f1=x=>(Math.round(x*10)/10).toFixed(1);
+const f2=x=>(Math.round(x*100)/100).toFixed(2);
+
+/* ------------------------------- Home ------------------------------- */
+/* ----------------------------- Graphics ----------------------------- */
+const TONES=['#D4452F','#1F8A5B','#C98A0B','#2F5D9B','#7A4E9E','#1E8A8A'];
+function tone(t){let h=0;for(const c of String(t||''))h=(h*31+c.charCodeAt(0))>>>0;return TONES[h%TONES.length];}
+const ico=d=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICON={
+  setup:'<path d="M9 4h6v3H9z"/><path d="M9 5H5v15h14V5h-4"/><path d="M9 13l2 2 4-4"/>',
+  print:'<path d="M7 8V4h10v4"/><path d="M7 17H4v-7h16v7h-3"/><path d="M7 14h10v6H7z"/>',
+  scan:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  chart:'<path d="M3 20h18"/><path d="M6 20v-9"/><path d="M12 20V5"/><path d="M18 20v-6"/>',
+  people:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.8a3.5 3.5 0 010 6.4"/><path d="M18.5 14.8c1.7.8 2.7 2.5 3 5.2"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>'
+};
+function artHero(){
+  const fill=[1,3,0,2,1,3,2];let rows='';
+  for(let i=0;i<7;i++){const y=70+i*17;rows+=`<rect x="54" y="${y-2.5}" width="9" height="5" rx="2.5" fill="#C9C2B0"/>`;
+    for(let o=0;o<4;o++)rows+=`<circle cx="${80+o*21}" cy="${y}" r="6" fill="${fill[i]===o?'#17233A':'#fff'}" stroke="#17233A" stroke-width="1.6"/>`;}
+  let mini='';
+  for(let i=0;i<5;i++)for(let o=0;o<4;o++){const on=[2,0,3,1,2][i]===o,ok=i!==3;
+    mini+=`<circle cx="${191+o*15}" cy="${66+i*15}" r="4.2" fill="${on?'#fff':'none'}" stroke="rgba(255,255,255,.55)" stroke-width="1.2"/>`+(on?`<circle cx="${191+o*15}" cy="${66+i*15}" r="7" fill="none" stroke="${ok?'#3DDC97':'#FF8A73'}" stroke-width="2"/>`:'');}
+  return `<svg class="art" viewBox="0 0 310 232" role="img" aria-label="A phone scanning a bubble answer sheet">
+    <ellipse cx="150" cy="218" rx="120" ry="9" fill="rgba(0,0,0,.25)"/>
+    <g transform="rotate(-7 115 120)"><rect x="38" y="24" width="152" height="184" rx="9" fill="#FFFDF8"/>
+      <rect x="46" y="32" width="9" height="9" fill="#17233A"/><rect x="173" y="32" width="9" height="9" fill="#17233A"/><rect x="46" y="191" width="9" height="9" fill="#17233A"/><rect x="173" y="191" width="9" height="9" fill="#17233A"/>
+      <rect x="64" y="34" width="84" height="6" rx="3" fill="#17233A"/><rect x="64" y="45" width="56" height="4" rx="2" fill="#C9C2B0"/>${rows}</g>
+    <g transform="rotate(9 220 118)"><rect x="170" y="30" width="100" height="172" rx="16" fill="#0E1626" stroke="#fff" stroke-width="3"/>
+      <rect x="179" y="44" width="82" height="126" rx="7" fill="#2B4170"/>${mini}
+      <rect x="179" y="112" width="82" height="3" fill="#FF6B52"/><rect x="179" y="115" width="82" height="16" fill="url(#scanG)"/>
+      <circle cx="220" cy="186" r="7" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"/></g>
+    <defs><linearGradient id="scanG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6B52" stop-opacity=".35"/><stop offset="1" stop-color="#FF6B52" stop-opacity="0"/></linearGradient></defs>
+    <circle cx="272" cy="40" r="25" fill="#D4452F" stroke="#fff" stroke-width="3"/><path d="M260 41l9 9 15-19" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(8 150)"><rect width="62" height="56" rx="10" fill="#fff"/><rect x="10" y="30" width="9" height="16" rx="2" fill="#D4452F"/><rect x="24" y="20" width="9" height="26" rx="2" fill="#C98A0B"/><rect x="38" y="10" width="9" height="36" rx="2" fill="#1F8A5B"/></g>
+  </svg>`;
+}
+function artEmpty(){
+  return `<svg viewBox="0 0 140 110"><ellipse cx="70" cy="100" rx="52" ry="6" fill="rgba(23,35,58,.08)"/><g transform="rotate(-5 70 55)"><rect x="34" y="8" width="72" height="88" rx="7" fill="#fff" stroke="#17233A" stroke-width="2.2"/>
+    <rect x="41" y="15" width="6" height="6" fill="#17233A"/><rect x="93" y="15" width="6" height="6" fill="#17233A"/><rect x="41" y="83" width="6" height="6" fill="#17233A"/><rect x="93" y="83" width="6" height="6" fill="#17233A"/>
+    ${[0,1,2,3].map(i=>[0,1,2].map(o=>`<circle cx="${56+o*14}" cy="${34+i*13}" r="4.3" fill="${(i+o)%3===0?'#17233A':'#fff'}" stroke="#17233A" stroke-width="1.5"/>`).join('')).join('')}</g>
+    <circle cx="108" cy="24" r="15" fill="#D4452F"/><path d="M101 25l5 5 9-11" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+const banner=(icon,color,title,text)=>`<div class="banner"><div class="ic" style="background:${color}">${ico(ICON[icon])}</div><div><h2>${title}</h2><p>${text}</p></div></div>`;
+
+function home(){
+  nav('home');E=null;S.atHome=true;
+  const cards=S.exams.slice().reverse().map(x=>`
+    <div class="card exam" style="--tone:${tone(x.quarter)}" onclick="openExam('${x.id}')">
+      <div class="band"><span>${esc(x.quarter||'Exam')}</span><span>${x.items} items</span></div>
+      <div class="in"><h3>${esc(x.title||'Untitled exam')}</h3>
+        <div class="meta">${esc(x.subject)} · ${esc(x.grade)}</div>
+        <div class="facts"><span>👤 ${esc(x.teacher||'—')}</span><span>📅 ${fmtDate(x.date)||'—'}</span></div>
+        <div class="foot"><span class="pill ${S.counts[x.id]?'g':''}">${S.counts[x.id]||0} sheets scanned</span><span style="color:var(--tone)">Open →</span></div></div>
+    </div>`).join('');
+  const step=(i,c,t,d)=>`<div class="step"><div class="ic" style="background:${c}">${ico(ICON[i])}</div><div><b>${t}</b><span>${d}</span></div></div>`;
+  $('#main').innerHTML=`
+    <section class="lead">
+      <div><span class="kick">Scan-based Item Performance Analysis Tool</span>
+        <h1>Scan. Score.<br><em>See what to reteach.</em></h1>
+        <p>Check answer sheets with your phone camera, get the item analysis and least learned competencies from your Table of Specifications, and walk away with an intervention plan — even without internet.</p>
+        <button class="btn pri" onclick="editExam()">＋ New exam</button>
+        <div class="byline">An innovation of <b>${APP.school}</b><br>Developed by <b>${APP.by}</b>, ${APP.role}</div></div>
+      ${artHero()}
+    </section>
+    <div class="steps">
+      ${step('setup','#2F5D9B','1 · Set up','Items, answer key and TOS')}
+      ${step('print','#7A4E9E','2 · Print','Bubble sheet with your format')}
+      ${step('scan','#D4452F','3 · Scan','Point the camera, score instantly')}
+      ${step('chart','#1F8A5B','4 · Reteach','Least learned + interventions')}
+    </div>
+    <div class="sech"><h2>Your exams</h2><i></i>${S.exams.length?`<span class="pill">${S.exams.length}</span>`:''}</div>
+    ${cards?`<div class="grid">${cards}</div>`:`<div class="card empty">${artEmpty()}<h3 style="justify-content:center">No exams yet</h3><p class="muted">Create your first exam: set the number of items, the answer key and your Table of Specifications. Then print the answer sheet and start scanning.</p></div>`}
+    ${DB.sync.url?'':`<p class="muted" style="margin-top:14px">📴 SIPAT works without internet — everything you do is kept on this phone. To back it up and share it with the school's Google Sheet, add the sync link in <a href="#" onclick="settings();return false">Settings</a>.</p>`}`;
+}
+
+/* ---------------------------- Exam editor ---------------------------- */
+const PERIODS=['Term 1','Term 2','Term 3','Summative Test','Diagnostic Test','Pre-Test','Post-Test','Quiz'];
+function periods(){const l=String(DB.settings.periods||'').split('\n').map(x=>x.trim()).filter(Boolean);return l.length?l:PERIODS.slice();}
+function periodOpts(cur){const l=periods();if(cur&&!l.includes(cur))l.unshift(cur);return l.map(g=>`<option ${cur===g?'selected':''}>${esc(g)}</option>`).join('')+'<option value="__new">＋ Add another…</option>';}
+function pickPeriod(sel){
+  if(sel.value!=='__new'){D.quarter=sel.value;return;}
+  const v=(prompt('Name of the term or type of test (e.g. Term 1, Summative Test 2):')||'').trim();
+  if(v){const l=periods();if(!l.includes(v)){l.push(v);DB.settings.periods=l.join('\n');touch(DB.settings);persist();}D.quarter=v;}
+  sel.innerHTML=periodOpts(D.quarter);
+}
+const FIELD_CHOICES=['Name','LRN','Grade & Section','Strand','Subject','Teacher','Date','Time','Score',"Parent's Signature"];
+function blankExam(){return{id:'',title:'',subject:'',grade:'Grade 11',quarter:periods()[0],teacher:'',date:new Date().toISOString().slice(0,10),time:'1 hour',items:50,options:4,threshold:75,key:'',fields:['Name','Grade & Section','Subject','Teacher','Date','Time','Score'],tos:[{code:'',competency:'',items:''}],iv:{}};}
+function editExam(id){
+  nav('home');
+  D=JSON.parse(JSON.stringify(id?S.exams.find(x=>x.id===id):blankExam()));
+  D.keyArr=Array.from({length:100},(_,i)=>(D.key||'')[i]&&D.key[i]!=='_'?D.key[i]:'');
+  const inp=(k,l,t='text',extra='')=>`<div><label>${l}</label><input type="${t}" value="${esc(D[k])}" ${extra} oninput="D.${k}=this.value"></div>`;
+  $('#main').innerHTML=`
+    <div class="row" style="margin-bottom:14px"><button class="btn ghost sm" onclick="${id?`openExam('${id}')`:'home()'}">← Back</button><h2>${id?'Edit exam':'New exam'}</h2></div>
+    <div class="card"><h3>1 · Exam details</h3><div class="form">
+      ${inp('title','Exam title','text','placeholder="e.g. Term 1 Examination"')}
+      ${inp('subject','Subject')}
+      <div><label>Grade level</label><select onchange="D.grade=this.value">${['Grade 11','Grade 12'].map(g=>`<option ${D.grade===g?'selected':''}>${g}</option>`).join('')}</select></div>
+      <div><label>Term / type of test</label><select onchange="pickPeriod(this)">${periodOpts(D.quarter)}</select></div>
+      ${inp('teacher','Subject teacher')}
+      ${inp('date','Date of exam','date')}
+      ${inp('time','Time allotted')}
+      <div><label>Number of items (5–100)</label><input type="number" min="5" max="100" value="${D.items}" onchange="D.items=Math.max(5,Math.min(100,+this.value||50));this.value=D.items;drawKey();tosCheck()"></div>
+      <div><label>Choices per item</label><select onchange="D.options=+this.value;drawKey()"><option value="4" ${D.options==4?'selected':''}>A – D</option><option value="5" ${D.options==5?'selected':''}>A – E</option></select></div>
+      <div><label>Mastery target (% MPS)</label><input type="number" min="1" max="100" value="${D.threshold}" oninput="D.threshold=+this.value||75"></div>
+    </div></div>
+    <div class="card"><h3>2 · Answer sheet format</h3><p class="muted" style="margin-top:-6px">Choose the blanks printed at the top of the answer sheet. Subject, teacher, date and time are pre-filled from the details above.</p>
+      <div class="chips" id="fieldChips"></div>
+      <div class="row" style="margin-top:10px;max-width:360px"><input id="newField" placeholder="Add another field…"><button class="btn sm" onclick="addField()">Add</button></div></div>
+    <div class="card"><h3>3 · Answer key</h3>
+      <div class="row" style="margin-bottom:10px;max-width:520px"><input id="quickKey" placeholder="Quick fill: type or paste the key, e.g. ABDCAAB…"><button class="btn sm" onclick="quickKey()">Fill</button></div>
+      <div class="keygrid" id="keyGrid"></div><p class="muted" id="keyNote"></p></div>
+    <div class="card"><h3>4 · Table of Specifications</h3><p class="muted" style="margin-top:-6px">List each learning competency and the item numbers that test it (e.g. <b>1-5, 8, 12</b>). This is what the least learned competencies report is built on.</p>
+      <table><thead><tr><th style="width:17%">Code</th><th>Learning competency</th><th style="width:22%">Item placement</th><th style="width:40px"></th></tr></thead><tbody id="tosBody"></tbody></table>
+      <div class="row" style="margin-top:10px"><button class="btn sm" onclick="D.tos.push({code:'',competency:'',items:''});drawTos()">＋ Add competency</button><span class="muted" id="tosNote"></span></div></div>
+    <div class="row"><button class="btn pri" id="saveBtn" onclick="saveDraft()">Save exam</button></div>`;
+  drawFields();drawKey();drawTos();
+}
+function drawFields(){
+  const all=FIELD_CHOICES.concat(D.fields.filter(f=>!FIELD_CHOICES.includes(f)));
+  $('#fieldChips').innerHTML=all.map((f,i)=>`<button class="chip ${D.fields.includes(f)?'on':''}" onclick="toggleField(${i})">${esc(f)}</button>`).join('');
+  drawFields.all=all;
+}
+function toggleField(i){const f=drawFields.all[i];D.fields=D.fields.includes(f)?D.fields.filter(x=>x!==f):D.fields.concat(f);if(D.fields.length>10){D.fields.pop();toast('Up to 10 fields fit on the sheet.',1);}drawFields();}
+function addField(){const v=$('#newField').value.trim();if(!v)return;if(!D.fields.includes(v)&&D.fields.length<10)D.fields.push(v);$('#newField').value='';drawFields();}
+function drawKey(){
+  let h='';
+  for(let i=0;i<D.items;i++){h+=`<div class="keyrow"><span>${i+1}</span>`;for(let o=0;o<D.options;o++)h+=`<button class="bub ${D.keyArr[i]===LET[o]?'on':''}" onclick="setKey(${i},${o})">${LET[o]}</button>`;h+='</div>';}
+  $('#keyGrid').innerHTML=h;keyNote();
+}
+function keyNote(){const m=D.keyArr.slice(0,D.items).filter(x=>!x||LET.indexOf(x)>=D.options).length;$('#keyNote').textContent=m?m+' item(s) still have no key.':'Answer key complete.';}
+function setKey(i,o){D.keyArr[i]=D.keyArr[i]===LET[o]?'':LET[o];drawKey();}
+function quickKey(){const s=$('#quickKey').value.toUpperCase().replace(/[^A-E]/g,'');for(let i=0;i<s.length&&i<D.items;i++)D.keyArr[i]=s[i];drawKey();}
+function drawTos(){
+  $('#tosBody').innerHTML=D.tos.map((t,i)=>`<tr>
+    <td><input value="${esc(t.code)}" placeholder="Code" oninput="D.tos[${i}].code=this.value"></td>
+    <td><textarea rows="2" placeholder="The learner…" oninput="D.tos[${i}].competency=this.value">${esc(t.competency)}</textarea></td>
+    <td><input value="${esc(t.items)}" placeholder="1-5, 8" oninput="D.tos[${i}].items=this.value;tosCheck()"></td>
+    <td class="c"><button class="btn ghost sm" title="Remove" onclick="D.tos.splice(${i},1);drawTos()">✕</button></td></tr>`).join('');
+  tosCheck();
+}
+function parseItems(spec,n){
+  const out=new Set();
+  String(spec||'').split(/[,;\s]+/).forEach(p=>{const m=p.match(/^(\d+)(?:\s*[-–]\s*(\d+))?$/);if(!m)return;let a=+m[1],b=m[2]?+m[2]:a;if(a>b)[a,b]=[b,a];for(let i=a;i<=b;i++)if(i>=1&&i<=n)out.add(i);});
+  return [...out].sort((a,b)=>a-b);
+}
+function tosCheck(){
+  if(!$('#tosNote'))return;
+  const seen={};let dup=[];
+  D.tos.forEach(t=>parseItems(t.items,D.items).forEach(i=>{if(seen[i])dup.push(i);seen[i]=1;}));
+  const miss=[];for(let i=1;i<=D.items;i++)if(!seen[i])miss.push(i);
+  $('#tosNote').textContent=(miss.length?`Not yet placed: ${ranges(miss)}. `:'All items are placed. ')+(dup.length?`Placed twice: ${ranges([...new Set(dup)])}.`:'');
+}
+function ranges(a){const o=[];for(let i=0;i<a.length;i++){let j=i;while(j+1<a.length&&a[j+1]===a[j]+1)j++;o.push(j>i?a[i]+'–'+a[j]:a[i]);i=j;}return o.join(', ');}
+async function saveDraft(){
+  if(!D.title.trim()||!D.subject.trim())return toast('Please enter the exam title and subject.',1);
+  D.key=D.keyArr.slice(0,D.items).map(x=>x&&LET.indexOf(x)<D.options?x:'_').join('');
+  D.tos=D.tos.filter(t=>t.code.trim()||t.competency.trim()||t.items.trim());
+  const x=Object.assign({},D);delete x.keyArr;
+  if(!x.id)x.id=newId('EX');touch(x);
+  const i=DB.exams.findIndex(e=>e.id===x.id);if(i>=0)DB.exams[i]=x;else DB.exams.push(x);
+  persist();toast('Exam saved.');openExam(x.id);
+}
+
+/* ----------------------------- Exam page ----------------------------- */
+async function openExam(id,tab){
+  nav('home');E=S.exams.find(x=>x.id===id);S.tab=tab||'scan';S.fsec='';
+  refresh();drawExam();
+}
+function drawExam(){
+  const miss=E.key.split('').filter(c=>c==='_').length;
+  $('#main').innerHTML=`
+    <div class="row" style="margin-bottom:8px"><button class="btn ghost sm" onclick="home()">← All exams</button></div>
+    <div class="hero xhead" style="--tone:${tone(E.quarter)}"><div><span class="pill">${esc(E.quarter)}</span><h2 style="margin-top:6px">${esc(E.title)}</h2>
+      <div class="muted">${esc(E.subject)} · ${esc(E.grade)} · ${E.items} items · ${esc(E.teacher)} · ${fmtDate(E.date)}</div></div>
+      <div class="row"><button class="btn dark" onclick="printSheet()">🖨 Print answer sheet</button><button class="btn" onclick="editExam('${E.id}')">Edit</button><button class="btn ghost" onclick="delExam()">Delete</button></div></div>
+    ${miss?`<p><span class="pill r">${miss} item(s) have no answer key yet — edit the exam before scanning.</span></p>`:''}
+    <div class="tabs">
+      <button class="${S.tab==='scan'?'on':''}" onclick="setTab('scan')">📷 Scan</button>
+      <button class="${S.tab==='results'?'on':''}" onclick="setTab('results')">📋 Results (${S.results.length})</button>
+      <button class="${S.tab==='report'?'on':''}" onclick="setTab('report')">📊 Item analysis &amp; interventions</button>
+    </div><div id="tab"></div>`;
+  ({scan:drawScan,results:drawResults,report:drawReport})[S.tab]();
+}
+function setTab(t){stopCam();S.review=null;S.tab=t;drawExam();}
+async function delExam(){if(!confirm('Delete this exam and all its scanned results?'))return;const id=E.id;touch(E).deleted=1;DB.results.forEach(r=>{if(r.examId===id)touch(r).deleted=1;});E=null;persist();toast('Exam deleted.');home();}
+const score=(ans,key)=>{let n=0;for(let i=0;i<key.length;i++)if(key[i]!=='_'&&ans[i]===key[i])n++;return n;};
+const sections=()=>[...new Set(Object.keys(S.roster).concat(S.results.map(r=>r.section)).filter(Boolean))].sort();
+
+/* ============================ OMR ENGINE ============================ */
+/*OMR-START*/
+var SHEET={W:210,H:297,MK:[[12,12],[198,12],[12,285],[198,285]],MS:7};
+function layout(n,opts){
+  // picks the column count that lets the bubbles be as large as the sheet allows
+  var cw0=12+opts*6.6+3,best=null,c,per,s,i,o,d,row;
+  for(c=1;c<=6;c++){per=Math.ceil(n/c);s=Math.min(190/(c*cw0),180/(per*7.2),1.6);if(!best||s>best.s+1e-9)best={c:c,per:per,s:s};}
+  var cols=best.c;per=best.per;s=best.s;
+  var colW=cw0*s,x0=(SHEET.W-cols*colW)/2+1.5*s,y0=96+3.6*s,items=[],num=[];
+  for(i=0;i<n;i++){var cc=Math.floor(i/per),rr=i%per,cy=y0+rr*7.2*s;row=[];
+    for(o=0;o<opts;o++)row.push({x:x0+cc*colW+(12+o*6.6)*s,y:cy});
+    items.push(row);num.push({x:x0+cc*colW+7*s,y:cy});}
+  var id=[[],[]];
+  for(d=0;d<10;d++){id[0].push({x:76+d*6.6,y:74});id[1].push({x:76+d*6.6,y:81.2});}
+  return {r:2.4*s,rId:2.4,s:s,items:items,num:num,id:id};
+}
+function binarize(g,W,H){
+  var S=new Uint32Array((W+1)*(H+1)),x,y,rs,W1=W+1;
+  for(y=0;y<H;y++){rs=0;for(x=0;x<W;x++){rs+=g[y*W+x];S[(y+1)*W1+x+1]=S[y*W1+x+1]+rs;}}
+  var half=Math.max(6,Math.round(Math.min(W,H)/14)),out=new Uint8Array(W*H);
+  for(y=0;y<H;y++){var y1=y-half<0?0:y-half,y2=y+half>=H?H-1:y+half;
+    for(x=0;x<W;x++){var x1=x-half<0?0:x-half,x2=x+half>=W?W-1:x+half;
+      var cnt=(x2-x1+1)*(y2-y1+1),sum=S[(y2+1)*W1+x2+1]-S[y1*W1+x2+1]-S[(y2+1)*W1+x1]+S[y1*W1+x1];
+      if(g[y*W+x]*cnt<sum*0.80)out[y*W+x]=1;}}
+  return out;
+}
+function findMarkers(bin,W,H){
+  var seen=new Uint8Array(W*H),stack=new Int32Array(W*H),ref=Math.min(W,H),lo=ref*0.011,hi=ref*0.075,cand=[],p,q,sp;
+  for(p=0;p<W*H;p++){
+    if(!bin[p]||seen[p])continue;
+    sp=0;stack[sp++]=p;seen[p]=1;
+    var minx=W,maxx=0,miny=H,maxy=0,area=0,sx=0,sy=0;
+    while(sp){q=stack[--sp];var x=q%W,y=(q-x)/W;area++;sx+=x;sy+=y;
+      if(x<minx)minx=x;if(x>maxx)maxx=x;if(y<miny)miny=y;if(y>maxy)maxy=y;
+      if(x>0&&bin[q-1]&&!seen[q-1]){seen[q-1]=1;stack[sp++]=q-1;}
+      if(x<W-1&&bin[q+1]&&!seen[q+1]){seen[q+1]=1;stack[sp++]=q+1;}
+      if(y>0&&bin[q-W]&&!seen[q-W]){seen[q-W]=1;stack[sp++]=q-W;}
+      if(y<H-1&&bin[q+W]&&!seen[q+W]){seen[q+W]=1;stack[sp++]=q+W;}}
+    var bw=maxx-minx+1,bh=maxy-miny+1;
+    if(bw<lo||bh<lo||bw>hi||bh>hi)continue;
+    var asp=bw/bh;if(asp<0.6||asp>1.67)continue;
+    if(area/(bw*bh)<0.62)continue;
+    cand.push({x:sx/area,y:sy/area,a:area});
+  }
+  if(cand.length<4)return null;
+  var corners=[[0,0],[W,0],[0,H],[W,H]],pick=[],used={},k,i;
+  for(k=0;k<4;k++){var best=-1,bd=1e18;
+    for(i=0;i<cand.length;i++){if(used[i])continue;var dx=cand[i].x-corners[k][0],dy=cand[i].y-corners[k][1],d=dx*dx+dy*dy;if(d<bd){bd=d;best=i;}}
+    if(best<0)return null;used[best]=1;pick.push(cand[best]);}
+  var dist=function(a,b){return Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));};
+  var wT=dist(pick[0],pick[1]),wB=dist(pick[2],pick[3]),hL=dist(pick[0],pick[2]),hR=dist(pick[1],pick[3]);
+  var ratio=(hL+hR)/(wT+wB);                       // true sheet ratio is 273/186 = 1.47
+  if(ratio<1.12||ratio>1.85)return null;
+  if(wT/wB<0.6||wT/wB>1.67||hL/hR<0.6||hL/hR>1.67)return null;
+  var as=pick.map(function(c){return c.a;});
+  if(Math.max.apply(null,as)/Math.min.apply(null,as)>4)return null;
+  if(pick[0].x>=pick[1].x||pick[2].x>=pick[3].x||pick[0].y>=pick[2].y||pick[1].y>=pick[3].y)return null;
+  return pick;
+}
+function solveH(src,dst){            // maps src[i] -> dst[i]; 4 point pairs
+  var A=[],i,j,k;
+  for(i=0;i<4;i++){var x=src[i][0],y=src[i][1],u=dst[i][0],v=dst[i][1];
+    A.push([x,y,1,0,0,0,-u*x,-u*y,u]);A.push([0,0,0,x,y,1,-v*x,-v*y,v]);}
+  for(i=0;i<8;i++){var m=i;for(j=i+1;j<8;j++)if(Math.abs(A[j][i])>Math.abs(A[m][i]))m=j;
+    var t=A[i];A[i]=A[m];A[m]=t;if(Math.abs(A[i][i])<1e-12)return null;
+    for(j=0;j<8;j++){if(j===i)continue;var f=A[j][i]/A[i][i];for(k=i;k<9;k++)A[j][k]-=f*A[i][k];}}
+  var h=[];for(i=0;i<8;i++)h.push(A[i][8]/A[i][i]);
+  return function(x,y){var w=h[6]*x+h[7]*y+1;return [(h[0]*x+h[1]*y+h[2])/w,(h[3]*x+h[4]*y+h[5])/w];};
+}
+function fillOf(bin,W,H,map,b,r){
+  var c=map(b.x,b.y),e=map(b.x+r,b.y),f=map(b.x,b.y+r);
+  var rad=0.62*Math.min(Math.hypot(e[0]-c[0],e[1]-c[1]),Math.hypot(f[0]-c[0],f[1]-c[1]));
+  if(rad<1.5)rad=1.5;
+  var R=Math.ceil(rad),cx=Math.round(c[0]),cy=Math.round(c[1]),n=0,dark=0,dx,dy;
+  for(dy=-R;dy<=R;dy++)for(dx=-R;dx<=R;dx++){if(dx*dx+dy*dy>rad*rad)continue;var x=cx+dx,y=cy+dy;if(x<0||y<0||x>=W||y>=H)continue;n++;if(bin[y*W+x])dark++;}
+  return n?dark/n:0;
+}
+function decide(f){                  // -> option index, -1 blank, -2 more than one shaded
+  var b=-1,s=-1,i;
+  for(i=0;i<f.length;i++){if(b<0||f[i]>f[b]){s=b;b=i;}else if(s<0||f[i]>f[s])s=i;}
+  if(f[b]<0.42)return -1;
+  if(s>=0&&f[s]>=0.42&&f[s]>=f[b]*0.72)return -2;
+  return b;
+}
+function readSheet(g,W,H,n,opts){
+  var bin=binarize(g,W,H),mk=findMarkers(bin,W,H);
+  if(!mk)return {ok:false,err:'Looking for the four black corner squares… keep the whole sheet inside the frame, flat and upright.'};
+  var map=solveH(SHEET.MK,mk.map(function(m){return [m.x,m.y];}));
+  if(!map)return {ok:false,err:'Could not align the sheet. Try again.'};
+  var L=layout(n,opts),ans=[],i,o;
+  for(i=0;i<n;i++){var f=[];for(o=0;o<opts;o++)f.push(fillOf(bin,W,H,map,L.items[i][o],L.r));
+    var d=decide(f);ans.push(d===-1?'_':d===-2?'*':'ABCDE'.charAt(d));}
+  var t=decide(L.id[0].map(function(b){return fillOf(bin,W,H,map,b,L.rId);})),u=decide(L.id[1].map(function(b){return fillOf(bin,W,H,map,b,L.rId);}));
+  return {ok:true,answers:ans,studentNo:(t>=0&&u>=0)?''+t+u:'',map:map,L:L};
+}
+/*OMR-END*/
+
+/* --------------------------- Answer sheet --------------------------- */
+function sheetSVG(X){
+  const L=layout(X.items,X.options),k=L.s,T=[],n2=v=>Math.round(v*100)/100;
+  const tx=(x,y,sz,t,a='start',w='400',fill='#111')=>`<text x="${n2(x)}" y="${n2(y)}" font-size="${n2(sz)}" text-anchor="${a}" font-weight="${w}" fill="${fill}">${esc(t)}</text>`;
+  const bub=(b,r,t,f)=>`<circle cx="${n2(b.x)}" cy="${n2(b.y)}" r="${n2(r)}" fill="#fff" stroke="#111" stroke-width="0.3"/>`+tx(b.x,b.y+0.95*f,2.7*f,t,'middle','400','#bdbdbd');
+  SHEET.MK.forEach(m=>T.push(`<rect x="${m[0]-3.5}" y="${m[1]-3.5}" width="7" height="7" fill="#000"/>`));
+  T.push(tx(105,13,3.6,S.settings.school||'',"middle",'700'));
+  T.push(tx(105,19.5,5,(X.title||'').toUpperCase(),"middle",'700'));
+  T.push(tx(105,25,3.4,[X.subject,X.grade,X.quarter,S.settings.schoolYear?'S.Y. '+S.settings.schoolYear:''].filter(Boolean).join('  ·  '),"middle"));
+  const pre={subject:X.subject,teacher:X.teacher,date:fmtDate(X.date),time:X.time};
+  const rows=Math.ceil(X.fields.length/2),rh=Math.min(8.5,34/Math.max(rows,1));
+  X.fields.forEach((f,i)=>{const x=i%2?108:14,y=35+Math.floor(i/2)*rh,lw=f.length*1.75+4;
+    T.push(tx(x,y,3.2,f+':','start','700'));
+    T.push(`<line x1="${x+lw}" y1="${n2(y+0.9)}" x2="${x+88}" y2="${n2(y+0.9)}" stroke="#111" stroke-width="0.25"/>`);
+    const v=pre[f.toLowerCase()];if(v)T.push(tx(x+lw+1.5,y,3.2,v));
+    if(f.toLowerCase()==='score')T.push(tx(x+86,y,3.2,'/ '+X.items,'end'));});
+  T.push(`<rect x="12" y="67.5" width="186" height="19.5" rx="2" fill="none" stroke="#111" stroke-width="0.35"/>`);
+  T.push(tx(15,73.5,3.4,'STUDENT NO.','start','700'));
+  T.push(tx(15,78,2.5,'Shade your class number.'));T.push(tx(15,81.5,2.5,'Example: 7 → Tens 0, Ones 7'));
+  T.push(tx(71,75,2.8,'Tens','end','700'));T.push(tx(71,82.2,2.8,'Ones','end','700'));
+  L.id.forEach(r=>r.forEach((b,d)=>T.push(bub(b,L.rId,d,1))));
+  T.push(tx(105,92,2.6,'Shade the circle of your answer completely using a dark pencil or black pen. Erase cleanly. Do not mark or fold over the four black squares.','middle'));
+  L.items.forEach((row,i)=>{T.push(tx(L.num[i].x,L.num[i].y+1.1*k,3.2*k,i+1,'end','700'));row.forEach((b,o)=>T.push(bub(b,L.r,LET[o],k)));});
+  T.push(tx(105,285.6,2.3,`${APP.name} · ${APP.tagline} · Developed by ${APP.by}, ${APP.school}`,'middle','400','#777'));
+  return `<svg class="sheet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 297" font-family="Arial,Helvetica,sans-serif">${T.join('')}</svg>`;
+}
+function doPrint(html,page){
+  let st=$('#pageStyle');if(!st){st=document.createElement('style');st.id='pageStyle';document.head.appendChild(st);}
+  st.textContent='@page{'+page+'}';
+  $('#printArea').innerHTML=html;
+  setTimeout(()=>window.print(),150);
+}
+function dlg(html){const d=$('#dlg');if(!html){d.className='';d.innerHTML='';return;}d.innerHTML=`<div class="card">${html}</div>`;d.className='on';}
+function printSheet(){
+  stopCam();const big=E.items>60;
+  const pic=n=>`<svg viewBox="0 0 ${n===2?60:44} ${n===2?44:60}" width="${n===2?60:44}" height="${n===2?44:60}"><rect x="1" y="1" width="${n===2?58:42}" height="${n===2?42:58}" rx="3" fill="#fff" stroke="#17233A" stroke-width="2"/>${n===2?'<path d="M30 3v38" stroke="#D4452F" stroke-width="1.5" stroke-dasharray="3 3"/>':''}${n===4?'<path d="M22 3v54M3 30h38" stroke="#D4452F" stroke-width="1.5" stroke-dasharray="3 3"/>':''}</svg>`;
+  dlg(`<h3>Print answer sheet</h3><p class="muted" style="margin-top:-4px">How many answer sheets on one piece of paper? The bubbles are sized to fill the sheet. For 2 or 4 per page, cut along the dashed lines before giving them out.</p>
+    <div class="pp">${[1,2,4].map((n,i)=>`<button ${n===4&&big?'disabled':''} onclick="doSheets(${n})">${pic(n)}<b>${n} per page</b><span>${['Full page','Half page each','Quarter page each'][i]}</span></button>`).join('')}</div>
+    ${big?'<p class="muted">4 per page is available for exams of up to 60 items — beyond that the bubbles become too small to shade and scan reliably.</p>':''}
+    <button class="btn ghost" onclick="dlg()">Cancel</button>`);
+}
+function doSheets(n){
+  dlg();const svg=sheetSVG(E);
+  doPrint(`<div class="sheets n${n}">${Array(n).fill(`<div class="cell">${svg}</div>`).join('')}</div>`,`size:A4 ${n===2?'landscape':'portrait'};margin:5mm`);
+  toast('Print at 100% / "Actual size". Photocopies work too.');
+}
+
+/* ------------------------------- Scan ------------------------------- */
+let cam={stream:null,timer:null,last:'',saved:''};
+function secControl(id,val,fn){
+  const secs=Object.keys(S.roster).sort();
+  if(!secs.length)return `<input id="${id}" value="${esc(val)}" placeholder="e.g. 11 – Rizal" oninput="${fn}">`;
+  const all=val&&!secs.includes(val)?secs.concat(val):secs;
+  return `<select id="${id}" onchange="${fn}"><option value="">— Choose the section —</option>${all.map(x=>`<option ${x===val?'selected':''}>${esc(x)}</option>`).join('')}</select>`;
+}
+function secNote(){
+  const e=$('#secNote');if(!e)return;const l=S.roster[S.scanSec||''];
+  e.innerHTML=l?`<span class="pill g">✓ Class list loaded — ${l.length} learners</span> Names appear automatically from the shaded student no.`
+    :Object.keys(S.roster).length?`<span class="pill a">Choose the section</span> so each learner's name appears automatically.`
+    :`<span class="pill a">No class list yet</span> Add your class in <a href="#" onclick="classes();return false">Classes</a> and names will appear automatically from the student no. — no typing.`;
+}
+function drawScan(){
+  const secs=Object.keys(S.roster).sort();if(!S.scanSec&&secs.length===1)S.scanSec=secs[0];
+  $('#tab').innerHTML=`
+    <div class="card" id="scanCard">
+      <div class="row"><div style="flex:1;min-width:180px;max-width:280px"><label>Section being scanned</label>${secControl('scanSec',S.scanSec||'',"S.scanSec=this.value.trim();secNote()")}</div>
+        <button class="btn pri" onclick="startCam()">📷 Start camera</button>
+        <label class="btn" style="margin:0;color:var(--ink);font-size:14px">🖼 Take / upload photo<input type="file" accept="image/*" capture="environment" hidden onchange="scanFile(this)"></label>
+        <button class="btn ghost" id="stopBtn" style="display:none" onclick="stopCam()">Stop</button></div>
+      <p class="muted" id="secNote" style="margin:10px 0 0"></p>
+      <div id="camBox"><video id="vid" playsinline muted></video><div class="frame"></div><div id="camStatus">Starting camera…</div></div>
+      <p class="muted" style="margin-bottom:0">Hold the phone upright over one answer sheet so all four black corner squares are visible. Good light and a flat sheet give the best reading. The sheet is read automatically once it is steady.</p>
+    </div><div id="review"></div>`;
+  secNote();
+}
+async function startCam(){
+  if(cam.stream)return;
+  try{cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});}
+  catch(e){cam.stream=null;return toast('Camera is not available here — use "Take / upload photo" instead.',1);}
+  const v=$('#vid');v.srcObject=cam.stream;try{await v.play();}catch(e){}
+  $('#camBox').classList.add('on');$('#stopBtn').style.display='';cam.last='';
+  cam.timer=setInterval(tick,600);
+}
+function stopCam(){
+  clearInterval(cam.timer);cam.timer=null;
+  if(cam.stream){cam.stream.getTracks().forEach(t=>t.stop());cam.stream=null;}
+  const b=$('#camBox');if(b)b.classList.remove('on');const s=$('#stopBtn');if(s)s.style.display='none';
+}
+function grab(src,sw,sh,max){
+  const k=Math.min(1,max/Math.max(sw,sh)),W=Math.round(sw*k),H=Math.round(sh*k);
+  const c=document.createElement('canvas');c.width=W;c.height=H;
+  const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(src,0,0,W,H);
+  const d=x.getImageData(0,0,W,H).data,g=new Uint8Array(W*H);
+  for(let i=0,j=0;i<g.length;i++,j+=4)g[i]=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;
+  const r=readSheet(g,W,H,E.items,E.options);r.base=c;return r;
+}
+function tick(){
+  const v=$('#vid');if(!v||!v.videoWidth||S.review)return;
+  const r=grab(v,v.videoWidth,v.videoHeight,1280),st=$('#camStatus');
+  if(!r.ok){cam.last='';st.textContent=r.err;return;}
+  const sig=r.answers.join('')+'|'+r.studentNo;
+  if(sig===cam.saved){st.textContent='This sheet is already saved — place the next sheet.';return;}
+  if(sig===cam.last){showReview(r);}else{cam.last=sig;st.textContent='Sheet found — hold steady…';}
+}
+function scanFile(inp){
+  const f=inp.files[0];if(!f)return;const img=new Image();
+  img.onload=()=>{const r=grab(img,img.naturalWidth,img.naturalHeight,1600);URL.revokeObjectURL(img.src);inp.value='';
+    if(!r.ok)return toast('Could not find the four corner squares in that photo. Retake it with the whole sheet visible.',1);showReview(r);};
+  img.onerror=()=>toast('That file could not be opened as an image.',1);
+  img.src=URL.createObjectURL(f);
+}
+function nameFor(sec,no){const l=S.roster[sec];if(!l||!no)return'';const x=l.find(p=>+p.no===+no);return x?x.name:'';}
+const dispName=r=>r.name||nameFor(r.section,r.studentNo);
+function showReview(r){
+  S.review=r;$('#camBox').classList.remove('on');$('#scanCard').style.display='none';
+  const sec=S.scanSec||'';
+  $('#review').innerHTML=`<div class="card"><h3>Check the reading</h3><div class="rev">
+    <div><canvas id="revCv"></canvas></div>
+    <div>
+      <div class="row" style="align-items:flex-end"><div><div class="muted">Score</div><div class="big"><span id="revScore"></span><span style="font-size:22px;color:var(--muted)"> / ${E.items}</span></div></div><span class="pill" id="revPct"></span></div>
+      <div class="form" style="margin:14px 0 6px">
+        <div><label>Student no.</label><input id="revNo" inputmode="numeric" value="${esc(r.studentNo)}" oninput="revName()"></div>
+        <div><label>Section</label>${secControl('revSec',sec,'revName()')}</div>
+        <div style="grid-column:1/-1"><label>Name</label><input id="revNm" list="nmList" placeholder="Learner's name" oninput="revPick()"><datalist id="nmList"></datalist></div>
+      </div>
+      <p class="muted" id="revHint" style="margin:0 0 12px"></p>
+      <label>Answers read — tap one to correct it</label><div class="ans" id="revAns"></div>
+      <div class="row" style="margin-top:16px"><button class="btn pri" id="revSave" onclick="saveScan()">✓ Save &amp; scan next</button><button class="btn ghost" onclick="closeReview()">Discard</button></div>
+    </div></div></div>`;
+  revName();paintReview();$('#review').scrollIntoView({behavior:'smooth'});
+}
+function revName(){        // student no. (or section) changed -> fill the name from the class list
+  const sec=$('#revSec').value.trim(),no=$('#revNo').value.trim(),l=S.roster[sec],n=nameFor(sec,no),h=$('#revHint');
+  $('#nmList').innerHTML=(l||[]).map(p=>`<option value="${esc(p.name)}">`).join('');
+  if(n){$('#revNm').value=n;h.innerHTML=`<span class="pill g">✓ No. ${esc(no)} — name filled in from the class list</span>`;}
+  else if(!l)h.innerHTML=sec?'No class list saved for this section, so type the name — or add the list in Classes for automatic names.':'Choose the section to fill in the name automatically.';
+  else if(!no)h.innerHTML='<span class="pill a">Student no. was not shaded clearly</span> Type the number, or pick the learner in the Name box.';
+  else h.innerHTML=`<span class="pill r">No. ${esc(no)} is not in the class list (${l.length} learners)</span> Check the number.`;
+}
+function revPick(){         // a name was picked -> fill the student no.
+  const l=S.roster[$('#revSec').value.trim()],v=$('#revNm').value.trim().toLowerCase();if(!l)return;
+  const x=l.find(p=>p.name.toLowerCase()===v);if(x){$('#revNo').value=String(x.no).padStart(2,'0');$('#revHint').innerHTML=`<span class="pill g">✓ No. ${x.no} — matched to the class list</span>`;}
+}
+function paintReview(){
+  const r=S.review,cv=$('#revCv'),x=cv.getContext('2d');cv.width=r.base.width;cv.height=r.base.height;x.drawImage(r.base,0,0);
+  const pr=b=>{const c=r.map(b.x,b.y),e=r.map(b.x+r.L.r,b.y);return[c[0],c[1],Math.hypot(e[0]-c[0],e[1]-c[1])];};
+  x.lineWidth=Math.max(2,cv.width/400);
+  r.answers.forEach((a,i)=>{const k=E.key[i],ai=LET.indexOf(a),ki=LET.indexOf(k);
+    if(ai>=0&&ai<E.options){const p=pr(r.L.items[i][ai]);x.strokeStyle=a===k?'#1F8A5B':'#D4452F';x.beginPath();x.arc(p[0],p[1],p[2]*1.25,0,7);x.stroke();}
+    if(a!==k&&ki>=0){const p=pr(r.L.items[i][ki]);x.strokeStyle='#1F8A5B';x.setLineDash([4,3]);x.beginPath();x.arc(p[0],p[1],p[2]*1.25,0,7);x.stroke();x.setLineDash([]);}});
+  const sc=score(r.answers.join(''),E.key),p=pct(sc,E.items);
+  $('#revScore').textContent=sc;const pp=$('#revPct');pp.textContent=f1(p)+'%';pp.className='pill '+(p>=E.threshold?'g':'r');
+  $('#revAns').innerHTML=r.answers.map((a,i)=>`<button class="${a===E.key[i]?'ok':'no'}" onclick="cycleAns(${i})">${i+1}. ${a==='_'?'—':a==='*'?'2+':a}</button>`).join('');
+}
+function cycleAns(i){const o=LET.slice(0,E.options)+'_',a=S.review.answers,k=o.indexOf(a[i]);a[i]=o[(k+1)%o.length];paintReview();}
+function closeReview(){S.review=null;cam.last='';$('#review').innerHTML='';$('#scanCard').style.display='';if(cam.stream)$('#camBox').classList.add('on');}
+async function saveScan(){
+  const r=S.review,no=$('#revNo').value.trim(),nm=$('#revNm').value.trim(),sec=$('#revSec').value.trim();
+  if(!no&&!nm)return toast('Enter the student number or name first.',1);
+  const ans=r.answers.join(''),id=E.id+'~'+sec+'~'+(no?(+no||no):'n:'+nm.toLowerCase());
+  const rec=touch({id,examId:E.id,section:sec,studentNo:no,name:nm,answers:ans,scannedAt:stampNow()});
+  const i=DB.results.findIndex(x=>x.id===id);if(i>=0)DB.results[i]=rec;else DB.results.push(rec);
+  S.scanSec=sec;cam.saved=ans+'|'+r.studentNo;persist();
+  toast(`Saved: ${nm||'No. '+no} — ${score(ans,E.key)}/${E.items}`);
+  const t=document.querySelectorAll('.tabs button')[1];if(t)t.textContent=`📋 Results (${S.results.length})`;
+  closeReview();
+}
+
+/* ------------------------------ Results ------------------------------ */
+function secFilter(){const s=sections();return s.length?`<select style="width:auto" onchange="S.fsec=this.value;setTab(S.tab)"><option value="">All sections</option>${s.map(x=>`<option ${S.fsec===x?'selected':''}>${esc(x)}</option>`).join('')}</select>`:'';}
+const rowsNow=()=>S.results.filter(r=>!S.fsec||r.section===S.fsec);
+function drawResults(){
+  const rows=rowsNow().slice().sort((a,b)=>(a.section+'').localeCompare(b.section)||(+a.studentNo||999)-(+b.studentNo||999)||a.name.localeCompare(b.name));
+  $('#tab').innerHTML=`<div class="card"><div class="row" style="margin-bottom:10px">${secFilter()}<span class="muted">${rows.length} learner(s)</span></div>
+    ${rows.length?`<div style="overflow:auto"><table><thead><tr><th class="c">No.</th><th>Name</th><th>Section</th><th class="c">Score</th><th class="c">%</th><th>Scanned</th><th></th></tr></thead><tbody>
+    ${rows.map(r=>{const sc=score(r.answers,E.key),p=pct(sc,E.items);return`<tr><td class="c">${esc(r.studentNo)}</td><td>${esc(dispName(r))}</td><td>${esc(r.section)}</td><td class="c"><b>${sc}</b> / ${E.items}</td><td class="c"><span class="pill ${p>=E.threshold?'g':'r'}">${f1(p)}</span></td><td class="muted">${esc(r.scannedAt)}</td><td class="c"><button class="btn ghost sm" onclick="delResult('${r.id}')">✕</button></td></tr>`;}).join('')}
+    </tbody></table></div>`:`<div class="empty">${artEmpty()}<p class="muted">No sheets scanned yet. Open the Scan tab to begin.</p></div>`}</div>`;
+}
+async function delResult(id){if(!confirm('Remove this learner\'s result?'))return;const r=DB.results.find(x=>x.id===id);if(r)touch(r).deleted=1;persist();drawExam();}
+
+/* ----------------------------- Analysis ----------------------------- */
+function mastery(m){return m>=96?'Mastered':m>=86?'Closely Approximating Mastery':m>=66?'Moving Towards Mastery':m>=35?'Average Mastery':m>=15?'Low Mastery':m>=5?'Very Low Mastery':'Absolutely No Mastery';}
+function diffLabel(p){return p>=0.81?'Very Easy':p>=0.61?'Easy':p>=0.41?'Average':p>=0.21?'Difficult':'Very Difficult';}
+function discLabel(d){return d>=0.40?'Very Good':d>=0.30?'Good':d>=0.20?'Marginal':'Poor';}
+function analyze(X,rows){
+  const n=X.items,N=rows.length,key=X.key,sc=rows.map(r=>score(r.answers,key));
+  const order=rows.map((_,i)=>i).sort((a,b)=>sc[b]-sc[a]),g=Math.max(1,Math.round(N*0.27));
+  const up=order.slice(0,g),lo=order.slice(-g),items=[];
+  for(let i=0;i<n;i++){
+    const cnt={};rows.forEach(r=>{const a=r.answers[i]||'_';cnt[a]=(cnt[a]||0)+1;});
+    const k=key[i],correct=k==='_'?0:(cnt[k]||0),p=N?correct/N:0;
+    const U=up.filter(j=>rows[j].answers[i]===k).length,Lw=lo.filter(j=>rows[j].answers[i]===k).length,Dx=(U-Lw)/g;
+    let wrong='',wn=0;LET.slice(0,X.options).split('').forEach(o=>{if(o!==k&&(cnt[o]||0)>wn){wn=cnt[o];wrong=o;}});
+    const useD=N>=10;
+    const decision=!useD?(p<0.21||p>0.9?'Revise':'Retain'):(Dx<0.2&&p<0.21?'Reject':Dx<0.2||p<0.21||p>0.9?'Revise':'Retain');
+    items.push({no:i+1,key:k,cnt,correct,p,D:Dx,useD,wrong,wn,decision});
+  }
+  const mean=N?sc.reduce((a,b)=>a+b,0)/N:0,sd=N?Math.sqrt(sc.reduce((a,b)=>a+(b-mean)*(b-mean),0)/N):0;
+  const comps=(X.tos||[]).map((t,ti)=>{const its=parseItems(t.items,n);if(!its.length)return null;
+    const correct=its.reduce((a,i)=>a+items[i-1].correct,0),mps=pct(correct,N*its.length);
+    const weak=rows.filter(r=>its.filter(i=>key[i-1]!=='_'&&r.answers[i-1]===key[i-1]).length/its.length<0.5).map(r=>dispName(r)||('No. '+r.studentNo));
+    return {ti,code:t.code,competency:t.competency,its,mps,level:mastery(mps),weak};}).filter(Boolean);
+  const ranked=comps.slice().sort((a,b)=>a.mps-b.mps);ranked.forEach((c,i)=>c.rank=i+1);
+  let least=ranked.filter(c=>c.mps<X.threshold);const below=least.length>0;
+  if(!below)least=ranked.slice(0,Math.min(3,ranked.length));
+  return {N,n,sc,items,mean,sd,mps:pct(mean,n),max:N?Math.max(...sc):0,min:N?Math.min(...sc):0,passed:sc.filter(s=>pct(s,n)>=X.threshold).length,comps,ranked,least,below};
+}
+function intervention(X,A,c){
+  const saved=(X.iv||{})[c.ti]||{};
+  const hard=c.its.map(i=>A.items[i-1]).sort((a,b)=>a.p-b.p).slice(0,3);
+  const ev=hard.map(it=>`Item ${it.no}: ${Math.round(it.p*100)}% correct`+(it.wn?`; ${Math.round(it.wn/A.N*100)}% chose ${it.wrong} instead of ${it.key}`:'')).join('\n');
+  const mis=hard.filter(it=>it.wn/A.N>=0.3).map(it=>`item ${it.no} (option ${it.wrong})`);
+  const flawed=hard.filter(it=>it.decision!=='Retain'&&it.p<0.21).map(it=>it.no);
+  let tier,st,tl,who,res;
+  if(c.mps<35){tier='Intensive reteaching';tl='2 weeks';who='Subject Teacher, with technical assistance from the Master Teacher';
+    st=['Reteach the competency starting from its prerequisite skills, using explicit instruction and worked examples.','Conduct small-group remediation sessions (2–3 sessions) using contextualized learning activity sheets.','Give a short formative check (3–5 items) after every session with immediate feedback.'];
+    res='Contextualized learning activity sheets; worked-example handouts; formative check items; parallel reassessment test';}
+  else if(c.mps<66){tier='Targeted remediation';tl='1 week';who='Subject Teacher';
+    st=['Re-discuss the specific part of the lesson where most errors occurred.','Pair the identified learners with classmates who mastered the competency for peer tutoring.','Provide guided practice through a strategic intervention material or learning activity sheet.'];
+    res='Strategic intervention material (SIM) or learning activity sheets; peer-tutoring pairing list; parallel reassessment test';}
+  else{tier='Reinforcement';tl='2–3 days';who='Subject Teacher';
+    st=['Conduct a brief review and error analysis of the missed items in class.','Assign additional practice exercises on the competency.','Include spiral review items on this competency in the next quizzes.'];
+    res='Practice exercises; item-error analysis sheet; spiral review items for succeeding quizzes';}
+  if(mis.length)st.push('Address the misconception behind the most-chosen wrong answer in '+mis.join(', ')+'.');
+  if(flawed.length)st.push('Review the wording and answer key of item '+flawed.join(', ')+' before reteaching — the item itself may be flawed.');
+  st.push('Administer a parallel reassessment and record the results.');
+  const obj=[`Raise the MPS of this competency from ${f1(c.mps)}% to at least ${X.threshold}% within ${tl}.`,
+    c.weak.length?`Enable the ${c.weak.length} identified learner(s) to answer correctly at least half of the items on this competency.`:'Sustain the learners\' mastery of this competency through continued practice.',
+    'Correct the misconceptions shown by the most frequently missed items.'];
+  const num=a=>a.map((x,i)=>(i+1)+'. '+x).join('\n');
+  return {tier,ev,
+    o:saved.o||num(obj),s:saved.s||num(st),m:saved.m||res,t:saved.t||tl,r:saved.r||who,
+    k:saved.k||`At least ${X.threshold}% MPS on the parallel reassessment.\nMeans of verification: reassessment results, learners' outputs, attendance sheet and intervention log.`,
+    learners:c.weak.length?`${c.weak.length} learner(s) below 50% on these items: ${c.weak.join('; ')}`:'Whole class (no learner scored below 50% on these items).'};
+}
+function drawReport(){
+  const rows=rowsNow();
+  if(!rows.length){$('#tab').innerHTML=`<div class="card"><div class="row">${secFilter()}</div><div class="empty">${artEmpty()}<p class="muted">Scan answer sheets first — the item analysis, least learned competencies and intervention plan appear here as soon as results come in.</p></div></div>`;return;}
+  const A=analyze(E,rows),st=S.settings,col=m=>m>=E.threshold?'var(--green)':m>=50?'var(--amber)':'var(--red)';
+  S.A=A;
+  const tosWarn=!A.comps.length?'<p><span class="pill r">No Table of Specifications yet — edit the exam and add the competencies with their item placement to see the least learned competencies.</span></p>':'';
+  const mts=(st.masterTeachers||'').split(/\n|;/).map(x=>x.trim()).filter(Boolean);
+  const sign=(role,name,title)=>`<div><p>${role}</p><b>${esc(name)}</b><p>${esc(title)}</p></div>`;
+  $('#tab').innerHTML=`
+  <div class="row noprint" style="margin-bottom:12px">${secFilter()}<button class="btn dark" onclick="printReport()">🖨 Print report</button><button class="btn" onclick="exportReport()">Export to Google Sheet</button></div>
+  <div id="report">
+    <div class="rhead">Republic of the Philippines<br><b>Department of Education</b><br>${esc(st.region)}${st.region&&st.division?'<br>':''}${esc(st.division)}<br><b>${esc(st.school)}</b><br><br>
+      <b>ITEM ANALYSIS AND LEAST LEARNED COMPETENCIES REPORT</b><br>${esc(E.title)}${st.schoolYear?' · S.Y. '+esc(st.schoolYear):''}</div>
+    <div class="card"><table><tr><th>Subject</th><td>${esc(E.subject)}</td><th>Grade / Section</th><td>${esc(E.grade)} · ${esc(S.fsec||'All sections')}</td></tr>
+      <tr><th>Teacher</th><td>${esc(E.teacher)}</td><th>Date of exam</th><td>${fmtDate(E.date)}</td></tr></table>
+      <div class="stats" style="margin-top:12px">
+        ${[['Examinees',A.N],['Items',A.n],['Mean',f2(A.mean)],['MPS',f1(A.mps)+'%'],['SD',f2(A.sd)],['Highest',A.max],['Lowest',A.min],[`At or above ${E.threshold}%`,A.passed+' ('+Math.round(pct(A.passed,A.N))+'%)']].map(s=>`<div class="stat"><b>${s[1]}</b><span>${s[0]}</span></div>`).join('')}
+      </div></div>
+    <div class="card"><h3>Competency mastery (from the Table of Specifications)</h3>${tosWarn}
+      ${A.comps.length?`<table><thead><tr><th>Code</th><th>Learning competency</th><th>Items</th><th class="c">MPS</th><th class="noprint"></th><th>Mastery level</th><th class="c">Rank<br>(1 = least learned)</th></tr></thead><tbody>
+      ${A.comps.map(c=>`<tr><td>${esc(c.code)}</td><td>${esc(c.competency)}</td><td>${ranges(c.its)}</td><td class="c"><b>${f1(c.mps)}%</b></td><td class="noprint"><div class="bar"><i style="width:${c.mps}%;background:${col(c.mps)}"></i></div></td><td>${c.level}</td><td class="c">${c.rank}</td></tr>`).join('')}</tbody></table>`:''}</div>
+    ${A.comps.length?`<div class="card"><h3>Least learned competencies and intervention plan</h3>
+      <p class="muted">${A.below?`${A.least.length} competenc${A.least.length>1?'ies':'y'} fell below the ${E.threshold}% mastery target.`:`All competencies met the ${E.threshold}% target. The lowest ones are listed for reinforcement.`} <span class="noprint">Yellow cells can be edited — your changes are saved with the exam. <a href="#" onclick="resetIv();return false">Reset to suggested plan</a></span></p>
+      <div style="overflow:auto"><table class="ivt"><thead><tr><th style="width:15%">Least learned competency</th><th class="c">MPS and<br>mastery level</th><th style="width:15%">Objectives</th><th style="width:19%">Intervention activities / tasks</th><th style="width:12%">Learners concerned</th><th>Materials / resources</th><th>Time frame</th><th>Persons responsible</th><th style="width:12%">Success indicator</th></tr></thead><tbody>
+      ${A.least.map(c=>{const v=intervention(E,A,c),ed=(f,val)=>`<td contenteditable="true" style="white-space:pre-wrap" onblur="ivEdit(${c.ti},'${f}',this.innerText)">${esc(val)}</td>`;
+        return`<tr><td><b>${esc(c.code)}</b> ${esc(c.competency)}<br><span class="muted">Items ${ranges(c.its)}</span><div style="white-space:pre-wrap;margin-top:6px;font-size:.92em"><i>Evidence:</i>\n${esc(v.ev)}</div></td>
+        <td class="c"><b>${f1(c.mps)}%</b><br>${c.level}<br><span class="pill a" style="margin-top:4px">${v.tier}</span></td>${ed('o',v.o)}${ed('s',v.s)}<td>${esc(v.learners)}</td>${ed('m',v.m)}${ed('t',v.t)}${ed('r',v.r)}${ed('k',v.k)}</tr>`;}).join('')}
+      </tbody></table></div></div>`:''}
+    <div class="card"><h3>Item analysis</h3><div style="overflow:auto"><table><thead><tr><th class="c">Item</th><th class="c">Key</th>${LET.slice(0,E.options).split('').map(o=>`<th class="c">${o}</th>`).join('')}<th class="c">Blank /<br>2+</th><th class="c">Correct</th><th class="c">% Correct</th><th class="c">Difficulty<br>index</th><th>Difficulty</th><th class="c">Discrimination<br>index</th><th>Discrimination</th><th>Decision</th></tr></thead><tbody>
+      ${A.items.map(it=>`<tr><td class="c"><b>${it.no}</b></td><td class="c">${it.key==='_'?'—':it.key}</td>${LET.slice(0,E.options).split('').map(o=>`<td class="c" ${o===it.key?'style="font-weight:700;background:#DDF1E7"':''}>${it.cnt[o]||0}</td>`).join('')}<td class="c">${(it.cnt._||0)+(it.cnt['*']||0)}</td><td class="c">${it.correct}</td><td class="c">${Math.round(it.p*100)}%</td><td class="c">${f2(it.p)}</td><td>${diffLabel(it.p)}</td><td class="c">${it.useD?f2(it.D):'—'}</td><td>${it.useD?discLabel(it.D):'—'}</td><td>${it.decision}</td></tr>`).join('')}
+      </tbody></table></div><p class="muted" style="margin-bottom:0">Difficulty index = proportion who answered correctly. Discrimination index compares the upper and lower 27% of examinees${A.N<10?' and is shown once there are at least 10 examinees':''}.</p></div>
+    <div class="card"><div class="sign">
+      ${sign('Prepared by:',E.teacher,'Subject Teacher')}
+      ${(mts.length?mts:['']).map((m,i)=>sign(i?'&nbsp;':'Checked and reviewed by:',m,st.masterTeacherTitle||'Master Teacher')).join('')}
+      ${sign(mts.length?'&nbsp;':'Checked and reviewed by:',st.coordinator,st.coordinatorTitle||'School Testing Coordinator')}
+      ${sign('Noted:',st.principal,st.principalTitle||'School Principal')}
+    </div></div>
+    <p class="gen">Generated with <b>${APP.name}</b> (${APP.full}) — “${APP.tagline}” · An innovation by ${APP.by}, ${APP.role}, ${APP.school}</p>
+  </div>`;
+}
+function ivEdit(ti,f,val){
+  val=val.trim();
+  E.iv=E.iv||{};E.iv[ti]=E.iv[ti]||{};if(E.iv[ti][f]===val)return;
+  const cur=intervention(Object.assign({},E,{iv:{}}),S.A,S.A.comps.find(c=>c.ti===ti));
+  if(!E.iv[ti][f]&&cur[f]===val)return;
+  E.iv[ti][f]=val;touch(E);persist();toast('Intervention plan saved.');
+}
+async function resetIv(){if(!confirm('Replace your edits with the suggested plan?'))return;E.iv={};touch(E);persist();drawReport();}
+function printReport(){doPrint($('#report').outerHTML,'size:A4 landscape;margin:12mm');}
+async function exportReport(){
+  const A=S.A,st=S.settings,L=LET.slice(0,E.options).split('');
+  const blocks=[
+    {title:'ITEM ANALYSIS AND LEAST LEARNED COMPETENCIES REPORT',rows:[['School',st.school],['Exam',E.title],['Subject',E.subject],['Grade / Section',E.grade+' · '+(S.fsec||'All sections')],['Teacher',E.teacher],['Date',fmtDate(E.date)],['Examinees',A.N],['Items',A.n],['Mean',f2(A.mean)],['MPS (%)',f1(A.mps)],['SD',f2(A.sd)],['Highest',A.max],['Lowest',A.min]]},
+    {title:'Competency mastery',header:true,rows:[['Code','Learning competency','Items','MPS (%)','Mastery level','Rank (1 = least learned)']].concat(A.comps.map(c=>[c.code,c.competency,ranges(c.its),f1(c.mps),c.level,c.rank]))},
+    {title:'Least learned competencies and intervention plan',header:true,rows:[['Least learned competency','MPS (%)','Mastery level','Evidence from the items','Objectives','Intervention activities / tasks','Learners concerned','Materials / resources','Time frame','Persons responsible','Success indicator']].concat(A.least.map(c=>{const v=intervention(E,A,c);return[(c.code+' '+c.competency).trim(),f1(c.mps),c.level+' — '+v.tier,v.ev,v.o,v.s,v.learners,v.m,v.t,v.r,v.k];}))},
+    {title:'Item analysis',header:true,rows:[['Item','Key'].concat(L,['Blank/2+','Correct','% Correct','Difficulty index','Difficulty','Discrimination index','Discrimination','Decision'])].concat(A.items.map(it=>[it.no,it.key].concat(L.map(o=>it.cnt[o]||0),[(it.cnt._||0)+(it.cnt['*']||0),it.correct,Math.round(it.p*100),f2(it.p),diffLabel(it.p),it.useD?f2(it.D):'',it.useD?discLabel(it.D):'',it.decision])))},
+    {title:'Signatories',rows:[['Prepared by:',E.teacher,'Subject Teacher'],['Checked and reviewed by:',(st.masterTeachers||'').split(/\n|;/).map(x=>x.trim()).filter(Boolean).join(', '),st.masterTeacherTitle],['Checked and reviewed by:',st.coordinator,st.coordinatorTitle],['Noted:',st.principal,st.principalTitle]]}
+  ];
+  if(!DB.sync.url||!navigator.onLine)return toast('Exporting to Google Sheets needs internet and the sync link. You can still print the report offline.',1);
+  toast('Writing the report to your Google Sheet…');let url;
+  try{url=(await post({action:'export',title:E.title+(S.fsec?' '+S.fsec:''),blocks})).url;}catch(e){return toast('Could not export: '+(e.message||e),1);}
+  $('#tab').insertAdjacentHTML('afterbegin',`<p><span class="pill g">Report exported.</span> <a href="${esc(url)}" target="_blank">Open it in Google Sheets ↗</a></p>`);
+}
+
+/* ------------------------------ Classes ------------------------------ */
+function classes(sel){
+  nav('classes');const secs=Object.keys(S.roster).sort();S._secs=secs;S._cur=sel||'';
+  $('#main').innerHTML=`${banner('people','#2F5D9B','Classes',"Add a class list so SIPAT can fill in each learner's name from the student number shaded on the answer sheet.")}
+    <div class="two">
+      <div class="card">${secs.length?secs.map((s,i)=>`<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><a href="#" onclick="classes(S._secs[${i}]);return false"><b>${esc(s)}</b></a><span class="pill">${S.roster[s].length}</span></div>`).join(''):'<p class="muted">No classes yet.</p>'}
+        <button class="btn sm" style="margin-top:12px" onclick="classes('')">＋ New class</button></div>
+      <div class="card"><div style="max-width:320px"><label>Section name</label><input id="clsName" value="${esc(sel||'')}" placeholder="e.g. 11 – Rizal"></div>
+        <label style="margin-top:12px">Learners — one name per line, in class-number order (line 1 = student no. 01)</label>
+        <textarea id="clsNames" rows="16" placeholder="Dela Cruz, Juan A.&#10;Santos, Maria B.">${esc((S.roster[sel]||[]).map(p=>p.name).join('\n'))}</textarea>
+        <div class="row" style="margin-top:12px"><button class="btn pri" onclick="saveClass()">Save class</button>${sel?`<button class="btn ghost" onclick="delClass(S._cur)">Delete class</button>`:''}</div></div>
+    </div>`;
+}
+async function saveClass(){
+  const n=$('#clsName').value.trim(),names=$('#clsNames').value.split('\n').map(x=>x.trim()).filter(Boolean);
+  if(!n||!names.length)return toast('Enter the section name and at least one learner.',1);
+  if(names.length>99)return toast('A class can have up to 99 learners.',1);
+  let c=DB.classes.find(x=>x.section===n);if(!c){c={section:n};DB.classes.push(c);}c.names=names;delete c.deleted;touch(c);persist();toast('Class saved.');classes(n);
+}
+async function delClass(n){if(!confirm('Delete the class list for '+n+'? Scanned results are kept.'))return;const c=DB.classes.find(x=>x.section===n);if(c)touch(c).deleted=1;persist();classes();}
+
+/* ------------------------------ Settings ------------------------------ */
+function settings(){
+  nav('settings');const st=S.settings;
+  const inp=(k,l,ph='')=>`<div><label>${l}</label><input data-k="${k}" value="${esc(st[k])}" placeholder="${ph}"></div>`;
+  $('#main').innerHTML=`${banner('gear','#7A4E9E','Settings','Sync, terms and types of test, school details and report signatories.')}
+    <div class="card"><h3>Sync with the school's Google Sheet</h3><p class="muted" style="margin-top:-6px">SIPAT keeps everything on this phone and uploads it whenever there is internet. Paste the web app link from the school's SIPAT Google Sheet (it ends in <b>/exec</b>) and the school passcode.</p>
+      <div class="form"><div style="grid-column:1/-1;max-width:640px"><label>Sync link</label><input id="syUrl" value="${esc(DB.sync.url)}" placeholder="https://script.google.com/macros/s/…/exec"></div><div><label>School passcode</label><input id="syCode" value="${esc(DB.sync.code)}"></div></div>
+      <p class="muted" style="margin-bottom:0">${DB.sync.last?'Last synced: '+new Date(DB.sync.last).toLocaleString():'Not synced yet.'} · ${pending()} change(s) waiting to upload.</p></div>
+    <div class="card"><h3>School</h3><div class="form">${inp('region','Region','Region XI')}${inp('division','Schools Division','Schools Division of …')}${inp('school','School')}${inp('schoolYear','School year','2026–2027')}</div></div>
+    <div class="card"><h3>Terms and types of test</h3><p class="muted" style="margin-top:-6px">These are the choices teachers see when creating an exam. One per line — add, rename or remove to match what your school uses.</p>
+      <div style="max-width:420px"><textarea data-k="periods" rows="8">${esc(periods().join('\n'))}</textarea></div></div>
+    <div class="card"><h3>Report signatories</h3><p class="muted" style="margin-top:-6px">The subject teacher of each exam signs as “Prepared by”.</p><div class="form">
+      <div style="grid-column:1/-1;max-width:520px"><label>Master Teacher(s) — one per line (Checked and reviewed by)</label><textarea data-k="masterTeachers" rows="3">${esc(st.masterTeachers)}</textarea></div>
+      ${inp('masterTeacherTitle','Master Teacher position title')}${inp('coordinator','School Testing Coordinator')}${inp('coordinatorTitle','Coordinator position title')}${inp('principal','School Principal (Noted)')}${inp('principalTitle','Principal position title')}</div></div>
+    <button class="btn pri" onclick="saveSet()">Save</button>
+    <div class="card about" style="margin-top:18px"><svg width="54" height="54" viewBox="0 0 38 38"><circle cx="19" cy="19" r="17" fill="#17233A"/><circle cx="19" cy="19" r="11" fill="none" stroke="#fff" stroke-width="2"/><path d="M13 19.5l4.5 4.5L27 12" fill="none" stroke="#D4452F" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><h3 style="margin:0">About ${APP.name}</h3><p style="margin:2px 0 0"><b>${APP.full}</b><br><i>${APP.tagline}</i></p>
+      <p class="muted" style="margin:8px 0 0">Innovator: <b>${APP.by}</b>, ${APP.role}<br>${APP.school}</p></div></div>`;
+}
+function saveSet(){document.querySelectorAll('[data-k]').forEach(e=>DB.settings[e.dataset.k]=e.value.trim());touch(DB.settings);DB.sync.url=$('#syUrl').value.trim();DB.sync.code=$('#syCode').value.trim();persist(true);toast('Saved.');if(DB.sync.url)sync(true);}
+
+/* -------------------------------- Boot -------------------------------- */
+if(typeof localStorage!=='undefined'){
+  DB=loadDB();refresh();home();paintSync();
+  addEventListener('online',()=>{paintSync();sync(false);});addEventListener('offline',paintSync);
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+  if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+  sync(false);
+}
+</script>
+</body>
+</html>
